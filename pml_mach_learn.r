@@ -18,7 +18,9 @@ testing_as_factors <- lapply(testing_raw[,col_names], factor)
 # Get the number of factors for each column
 num_factor_levels <- lapply(testing_as_factors, function(x) nlevels(x))
 # Keep only those column which have >1 factor level (so some classification value)
+# Also remove row number variable
 training_proc <- training_raw[, num_factor_levels > 1]
+training_proc <- training_raw[, -1]
 
 ####### DATA-SPLITTING #############
 
@@ -61,8 +63,8 @@ confusionMatrix(data=validation_prediction, barbell_valid$classe)
 # Which again gives 0 miss-classification error
 
 # Finally; as results above are so positive; try with the test set
-final_prediction <- predict(modFit, newdata=subset(barbell_test, select=-c(classe)))
-confusionMatrix(data=final_prediction, barbell_test$classe)
+test_prediction <- predict(modFit, newdata=subset(barbell_test, select=-c(classe)))
+confusionMatrix(data=test_prediction, barbell_test$classe)
 
 # Here there was a single miss-classification error, but with an accuracy of 99.95% it would be
 # unlucky for the model to fail at fitting one of the 20 examples
@@ -72,5 +74,7 @@ confusionMatrix(data=final_prediction, barbell_test$classe)
 
 # Extract relevant fields of real test data:
 testing_proc <- testing_raw[, num_factor_levels > 1]
+testing_proc <- testing_raw[, -1]
+
 real_test_prediction <- predict(modFit, newdata=testing_proc)
 real_test_prediction
