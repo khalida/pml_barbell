@@ -45,7 +45,7 @@
 <p>Only data columns (attributes) which provide some differentiation in the final test data-set are kept.
 This could be considered 'cheating' as the final test data is examined; however it is reasonable to assume that in most applications where a prediction is necessary which attributes will be gathered going forwards would be known.</p>
 
-<p>All of the attributes in the final test set are converted to factors; and those with fewer than 2 factors (so no differentiation between any of the samples) are dropped from the data.</p>
+<p>All of the attributes in the final test set are converted to factors; and those with fewer than 2 factors (so no differentiation between any of the samples) are dropped from the data. It was also necessary to drop the row number variable 'X'; as otherwise this will lead to the prediction of all A's in the testing data (as the row numbers are all small).</p>
 
 <h2>
 <a name="3-data-splitting" class="anchor" href="#3-data-splitting"><span class="octicon octicon-link"></span></a>3) Data Splitting</h2>
@@ -56,7 +56,7 @@ This could be considered 'cheating' as the final test data is examined; however 
 <a name="4-model-training" class="anchor" href="#4-model-training"><span class="octicon octicon-link"></span></a>4) Model Training</h2>
 
 <p>The model is then trained using the random forest method (method='rf') from within the caret package. All of the default values are used; as an initial attempt, and all attributes (i.e. all data columns other than the class) were included as predictors.
-This training step takes rather a long time to run.</p>
+This training step takes rather a long time to run, because of the large number of attributes which have been kept.</p>
 
 <h2>
 <a name="5-checking-accuracy" class="anchor" href="#5-checking-accuracy"><span class="octicon octicon-link"></span></a>5) Checking Accuracy</h2>
@@ -64,20 +64,21 @@ This training step takes rather a long time to run.</p>
 <p>The accuracy of the model was then checked against the training and cross-validation sets. These both gave a very low miss-classification error. The confusion matrices are reproduced below for reference:</p>
 
 <hr><pre><code>Confusion Matrix and Statistics (Training Set)
-           Reference
- Prediction    A    B    C    D    E
-          A 3906    0    0    0    0
-          B    0 2658    0    0    0
-          C    0    0 2395    0    0
-          D    0    0    0 2251    0
-          E    0    0    0    0 2525
+
+          Reference
+Prediction    A    B    C    D    E
+         A 3906    0    0    0    0
+         B    0 2658    0    0    0
+         C    0    0 2395    0    0
+         D    0    0    0 2251    0
+         E    0    0    0    0 2525
 
 Overall Statistics
 
-                Accuracy : 1          
-                  95% CI : (0.9997, 1)
-     No Information Rate : 0.2844     
-     P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+               Accuracy : 1          
+                 95% CI : (0.9997, 1)
+    No Information Rate : 0.2844     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16
 </code></pre>
 
 <hr><pre><code>Confusion Matrix and Statistics (Validation Set)
@@ -85,38 +86,41 @@ Overall Statistics
           Reference
 Prediction    A    B    C    D    E
          A 1116    0    0    0    0
-         B    0  760    0    0    0
-         C    0    0  685    0    0
+         B    0  760    1    0    0
+         C    0    0  684    0    0
          D    0    0    0  644    0
          E    0    0    0    0  722
 
 Overall Statistics
 
-               Accuracy : 1          
-                 95% CI : (0.9991, 1)
+               Accuracy : 0.9997     
+                 95% CI : (0.9986, 1)
     No Information Rate : 0.2842     
     P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
 </code></pre>
 
 <hr><p>Given how low the miss-classification error was it was decided that no further model tuning was required, so all that was left is to make an estimate of the out of sample error.
-This is done by attempting to predict the class of the test instances. The confusion matrix for the test set is given below. This would suggest the out-of-sample accuracy is exactly 1.</p>
+This is done by attempting to predict the class of the test instances. The confusion matrix for the test set is given below. This would suggest the out-of-sample accuracy of 0.9985, which should be sufficient to correctly classify the 20 example cases.</p>
 
-<hr><pre><code>Confusion Matrix and Statistics (actual test set)
+<hr><pre><code>Confusion Matrix and Statistics (Test Set)
 
           Reference
 Prediction   A   B   C   D   E
          A 558   0   0   0   0
          B   0 379   0   0   0
-         C   0   0 342   0   0
-         D   0   0   0 321   0
+         C   0   0 342   3   0
+         D   0   0   0 318   0
          E   0   0   0   0 360
 
 Overall Statistics
 
-               Accuracy : 1          
-                 95% CI : (0.9981, 1)
-    No Information Rate : 0.2847     
-    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+               Accuracy : 0.9985          
+                 95% CI : (0.9955, 0.9997)
+    No Information Rate : 0.2847          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+
+                  Kappa : 0.9981          
+ Mcnemar's Test P-Value : NA              
 </code></pre>
 
 <hr><p>Because no modifications were made to the base random forest method, it is likely that a slightly better model could be made by running the training method again on all of the data; but it would not then be possible to quote an expected out of sample accuracy.</p>
@@ -125,7 +129,8 @@ Overall Statistics
 <a name="6-make-predictions" class="anchor" href="#6-make-predictions"><span class="octicon octicon-link"></span></a>6) Make Predictions</h2>
 
 <p>Finally predictions are made regarding the actual test set (for which the actual classification is not known).
-Rather strangely this predicted that all 20 of the test cases were in class 'A', which seems a little odd, but this was the answer submitted.</p>
+The predicted classes are (in order):
+B A B A A E D B A A B C B A E E A B B B</p>
       </section>
     </div>
 
