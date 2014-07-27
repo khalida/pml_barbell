@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Pml barbell : Submission for barbell project in Practical Machine Learning Coursera Course" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pml barbell</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/khalida/pml_barbell">View on GitHub</a>
+
+          <h1 id="project_title">Pml barbell</h1>
+          <h2 id="project_tagline">Submission for barbell project in Practical Machine Learning Coursera Course</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/khalida/pml_barbell/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/khalida/pml_barbell/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="practical-machine-learning-course-submission" class="anchor" href="#practical-machine-learning-course-submission"><span class="octicon octicon-link"></span></a>Practical Machine Learning Course Submission</h1>
+
+<p>The processing steps performed in the uploaded R script are summarised below. The code itself is also reasonably well commented.</p>
+
+<h2>
+<a name="1-loading-data" class="anchor" href="#1-loading-data"><span class="octicon octicon-link"></span></a>1) Loading data</h2>
+
+<h2>
+<a name="2-pre-processing" class="anchor" href="#2-pre-processing"><span class="octicon octicon-link"></span></a>2) Pre-Processing</h2>
+
+<p>Only data columns (attributes) which provide some differentiation in the final test data-set are kept.
+This could be considered 'cheating' as the final test data is examined; however it is reasonable to assume that in most applications where a prediction is necessary which attributes will be gathered going forwards would be known.</p>
+
+<p>All of the attributes in the final test set are converted to factors; and those with fewer than 2 factors (so no differentiation between any of the samples) are dropped from the data.</p>
+
+<h2>
+<a name="3-data-splitting" class="anchor" href="#3-data-splitting"><span class="octicon octicon-link"></span></a>3) Data Splitting</h2>
+
+<p>The training data is split into 3 sets, with 70% of the observations used for model training, 20% used for cross-validation and any required model tuning work, and 10% used for making a final estimation of the model accuracy.</p>
+
+<h2>
+<a name="4-model-training" class="anchor" href="#4-model-training"><span class="octicon octicon-link"></span></a>4) Model Training</h2>
+
+<p>The model is then trained using the random forest method (method='rf') from within the caret package. All of the default values are used; as an initial attempt, and all attributes (i.e. all data columns other than the class) were included as predictors.
+This training step takes rather a long time to run.</p>
+
+<h2>
+<a name="5-checking-accuracy" class="anchor" href="#5-checking-accuracy"><span class="octicon octicon-link"></span></a>5) Checking Accuracy</h2>
+
+<p>The accuracy of the model was then checked against the training and cross-validation sets. These both gave a very low miss-classification error. The confusion matrices are reproduced below for reference:</p>
+
+<hr><pre><code>Confusion Matrix and Statistics (Training Set)
+           Reference
+ Prediction    A    B    C    D    E
+          A 3906    0    0    0    0
+          B    0 2658    0    0    0
+          C    0    0 2395    0    0
+          D    0    0    0 2251    0
+          E    0    0    0    0 2525
+
+Overall Statistics
+
+                Accuracy : 1          
+                  95% CI : (0.9997, 1)
+     No Information Rate : 0.2844     
+     P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+</code></pre>
+
+<hr><pre><code>Confusion Matrix and Statistics (Validation Set)
+
+          Reference
+Prediction    A    B    C    D    E
+         A 1116    0    0    0    0
+         B    0  760    0    0    0
+         C    0    0  685    0    0
+         D    0    0    0  644    0
+         E    0    0    0    0  722
+
+Overall Statistics
+
+               Accuracy : 1          
+                 95% CI : (0.9991, 1)
+    No Information Rate : 0.2842     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+</code></pre>
+
+<hr><p>Given how low the miss-classification error was it was decided that no further model tuning was required, so all that was left is to make an estimate of the out of sample error.
+This is done by attempting to predict the class of the test instances. The confusion matrix for the test set is given below. This would suggest the out-of-sample accuracy is exactly 1.</p>
+
+<hr><pre><code>Confusion Matrix and Statistics (actual test set)
+
+          Reference
+Prediction   A   B   C   D   E
+         A 558   0   0   0   0
+         B   0 379   0   0   0
+         C   0   0 342   0   0
+         D   0   0   0 321   0
+         E   0   0   0   0 360
+
+Overall Statistics
+
+               Accuracy : 1          
+                 95% CI : (0.9981, 1)
+    No Information Rate : 0.2847     
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16  
+</code></pre>
+
+<hr><p>Because no modifications were made to the base random forest method, it is likely that a slightly better model could be made by running the training method again on all of the data; but it would not then be possible to quote an expected out of sample accuracy.</p>
+
+<h2>
+<a name="6-make-predictions" class="anchor" href="#6-make-predictions"><span class="octicon octicon-link"></span></a>6) Make Predictions</h2>
+
+<p>Finally predictions are made regarding the actual test set (for which the actual classification is not known).
+Rather strangely this predicted that all 20 of the test cases were in class 'A', which seems a little odd, but this was the answer submitted.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pml barbell maintained by <a href="https://github.com/khalida">khalida</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
