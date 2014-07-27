@@ -56,13 +56,13 @@ train_prediction <- predict(modFit, newdata=barbell_train)
 confusionMatrix(data=train_prediction, barbell_train$classe)
 
 # Then check on validation set
-validation_prediction <- predict(modFit, newdata=barbell_valid)
+validation_prediction <- predict(modFit, newdata=subset(barbell_valid, select=-c(classe)))
 confusionMatrix(data=validation_prediction, barbell_valid$classe)
 # Which again gives 0 miss-classification error
 
 # Finally; as results above are so positive; try with the test set
-test_prediction <- predict(modFit, newdata=barbell_test)
-confusionMatrix(data=test_prediction, barbell_test$classe)
+final_prediction <- predict(modFit, newdata=subset(barbell_test, select=-c(classe)))
+confusionMatrix(data=final_prediction, barbell_test$classe)
 
 # Here there was a single miss-classification error, but with an accuracy of 99.95% it would be
 # unlucky for the model to fail at fitting one of the 20 examples
@@ -73,3 +73,4 @@ confusionMatrix(data=test_prediction, barbell_test$classe)
 # Extract relevant fields of real test data:
 testing_proc <- testing_raw[, num_factor_levels > 1]
 real_test_prediction <- predict(modFit, newdata=testing_proc)
+real_test_prediction
