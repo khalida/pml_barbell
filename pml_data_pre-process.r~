@@ -1,0 +1,36 @@
+setwd('/home/khalid/Documents/03 - Courses/Practical Machine Learning/barbell project/data');
+training_raw = read.csv('pml-training.csv')
+testing_raw = read.csv('pml-testing.csv')
+# head(training_raw)
+# summary(training_raw)
+# str(training_raw)
+
+# NB: As the model is going to be tested against the test-set let us consider only those attributes which are
+# present in the test set and which show some variation (therefore can hold classification value) in the
+# test set. This is also a useful step to reduce the number of attributes.
+summary(testing_raw)
+
+####### PRE-PROCESSING #############
+
+# Convert all variables test set to factors
+col_names <- names(testing_raw)
+testing_as_factors <- lapply(testing_raw[,col_names], factor)
+# Get the number of factors for each column
+num_factor_levels <- lapply(testing_as_factors, function(x) nlevels(x))
+# Keep only those column which have >1 factor level (so some classification value)
+training_proc <- training_raw[, num_factor_levels > 1]
+
+####### DATA-SPLITTING #############
+
+# Create a test set (10%), a training set (70%)
+# and a cross validation set (20%). Test set not to be used
+# for any of training procedures
+
+library(caret)
+inTraining <- createDataPartition(training_proc$classe, p = 0.9, list=FALSE)
+barbell_train <- training_proc[inTraining,]
+barbell_test <- training_proc[-inTraining,]
+
+inValidation <- createDataPartition(barbell_train$classe, p=(0.2/0.9), list=FALSE)
+barbell_valid <- barbell_train[inValidation,]
+barbell_train <- barbell_train[-inValidation,]
